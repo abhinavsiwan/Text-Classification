@@ -28,14 +28,17 @@ def main():
     probab_spam = data["spam_wcount"]/data["vocab_size"]
     probab_ham = data["ham_wcount"]/data["vocab_size"]
 
-    # used during accuracy calculation
+    # used during accuracy and recall calculation
     ham_file_count = 0
     spam_file_count = 0
 
-    # files classified as ham or spam
+    # No of files classified as ham or spam
     ham_classified_true = 0
     spam_classified_true = 0
+    ham_classified_false = 0
+    spam_classified_false = 0
 
+    fout = open("nboutput.txt", "w")
     for root, subdir, subfiles in os.walk(directory):
         # print(root)
         files = [f for f in listdir(root) if isfile(join(root, f))]
@@ -59,20 +62,51 @@ def main():
                 ham_file_count += 1
                 if prob_ham_file > prob_spam_file:
                     ham_classified_true += 1
+                    fout.writelines("ham " + root[root.index("dev"):] + "/" + file + "\n")
+                else:
+                    ham_classified_false += 1
+                    fout.writelines("spam " + root[root.index("dev"):] + "/" + file + "\n")
             elif "spam" in root:
                 spam_file_count += 1
                 if prob_spam_file > prob_ham_file:
                     spam_classified_true += 1
+                    fout.writelines("spam " + root[root.index("dev"):] + "/" + file + "\n")
+                else:
+                    spam_classified_false += 1
+                    fout.writelines("ham " + root[root.index("dev"):] + "/" + file + "\n")
 
     accuracy_ham = ham_classified_true/ham_file_count
     accuracy_spam = spam_classified_true/spam_file_count
 
+    # calculating precision for ham and spam
+    precision_spam = spam_classified_true/(spam_classified_true + ham_classified_false)
+    precision_ham = ham_classified_true/(ham_classified_true + spam_classified_false)
+
+    # calculating recall for ham and spam
+    recall_spam = spam_classified_true/spam_file_count
+    recall_ham = ham_classified_true/ham_file_count
+
+    # calculating f1 score for ham and spam
+    f1_spam = (2 * precision_spam * recall_spam)/(precision_spam + recall_spam)
+    f1_ham = (2 * precision_ham * recall_ham)/(precision_ham + recall_ham)
+
     print("Total ham files:" + str(ham_file_count))
     print("Total spam files:" + str(spam_file_count))
-    print("Total ham classified:" + str(ham_classified_true))
-    print("Total spam classified:" + str(spam_classified_true))
-    print("ham accuracy" + str(accuracy_ham))
-    print("spam accuracy" + str(accuracy_spam))
+    print("Total ham classified true:" + str(ham_classified_true))
+    print("Total ham classified false:" + str(ham_classified_false))
+    print("Total spam classified true:" + str(spam_classified_true))
+    print("Total spam classified false:" + str(spam_classified_false))
+    print()
+    print("ham accuracy:" + str(accuracy_ham))
+    print("spam accuracy:" + str(accuracy_spam))
+    print()
+    print("spam precision:" + str(precision_spam))
+    print("spam recall:" + str(recall_spam))
+    print("spam F1 Score:" + str(f1_spam))
+    print()
+    print("ham precision:" + str(precision_ham))
+    print("ham recall:" + str(recall_ham))
+    print("ham F1 Score:" + str(f1_ham))
 
 
 if __name__ == "__main__":main()
