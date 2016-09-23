@@ -7,10 +7,10 @@ from pprint import pprint
 import math
 
 
-def main():
+def classify():
     arg = sys.argv
-    # directory = arg[1]
-    directory = "../Spam or Ham/dev/"
+    directory = arg[1]
+    # directory = "../Spam or Ham/dev/"
 
     # read the json data from nbmodel.txt
     with open("nbmodel.txt") as data_file:
@@ -43,6 +43,8 @@ def main():
         # print(root)
         files = [f for f in listdir(root) if isfile(join(root, f))]
         for file in files:
+            if file.startswith('.'):
+                continue
             # print(root + "/" + file)
             f = open(root + "/" + file, "r", encoding="latin1")
             words = f.read().strip().split()
@@ -62,18 +64,18 @@ def main():
                 ham_file_count += 1
                 if prob_ham_file > prob_spam_file:
                     ham_classified_true += 1
-                    fout.writelines("ham " + root[root.index("dev"):] + "/" + file + "\n")
+                    fout.writelines("ham " + root + "/" + file + "\n")
                 else:
                     ham_classified_false += 1
-                    fout.writelines("spam " + root[root.index("dev"):] + "/" + file + "\n")
+                    fout.writelines("spam " + root + "/" + file + "\n")
             elif "spam" in root:
                 spam_file_count += 1
                 if prob_spam_file > prob_ham_file:
                     spam_classified_true += 1
-                    fout.writelines("spam " + root[root.index("dev"):] + "/" + file + "\n")
+                    fout.writelines("spam " + root + "/" + file + "\n")
                 else:
                     spam_classified_false += 1
-                    fout.writelines("ham " + root[root.index("dev"):] + "/" + file + "\n")
+                    fout.writelines("ham " + root + "/" + file + "\n")
 
     accuracy_ham = ham_classified_true/ham_file_count
     accuracy_spam = spam_classified_true/spam_file_count
@@ -89,7 +91,7 @@ def main():
     # calculating f1 score for ham and spam
     f1_spam = (2 * precision_spam * recall_spam)/(precision_spam + recall_spam)
     f1_ham = (2 * precision_ham * recall_ham)/(precision_ham + recall_ham)
-
+    '''
     print("Total ham files:" + str(ham_file_count))
     print("Total spam files:" + str(spam_file_count))
     print("Total ham classified true:" + str(ham_classified_true))
@@ -107,6 +109,6 @@ def main():
     print("ham precision:" + str(precision_ham))
     print("ham recall:" + str(recall_ham))
     print("ham F1 Score:" + str(f1_ham))
+    '''
 
-
-if __name__ == "__main__":main()
+if __name__ == "__main__":classify()

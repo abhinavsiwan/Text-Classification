@@ -3,6 +3,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import json
+from pprint import pprint
 
 # spam_dict = dict()
 # ham_dict = dict()
@@ -20,10 +21,10 @@ class Model():
         self.word_dict = word_dict
 
 
-def main():
+def learn():
     arg = sys.argv
-    # directory = arg[1]
-    directory = "../Spam or Ham/train/"
+    directory = arg[1]
+    # directory = "../Spam or Ham/train/"
 
     wordcount_spam = 0     # No of words in spam
     wordcount_ham = 0      # No of words in ham
@@ -62,6 +63,7 @@ def main():
                     wordcount_spam += 1
 
     vocabulary_size = len(word_dict)
+    '''
     print("Vocabulary Size:" + str(vocabulary_size))
     print("spam file count :" + str(spam_file_count))
     print("ham file count :" + str(ham_file_count))
@@ -70,15 +72,17 @@ def main():
     print("Total Words in Spam:" + str(wordcount_spam))
     print("Total Words in ham:" + str(wordcount_ham))
 
+    # print(pprint(word_dict))
     # print(spam_dict.keys())
+    '''
 
     # serializing the data
     obj = Model(vocabulary_size, spam_file_count, ham_file_count, wordcount_spam, wordcount_ham, word_dict)
     a = json.dumps(vars(obj))
     fs = open("nbmodel.txt", "w")
     fs.write(a)
-
-if __name__ == "__main__": main()
+    fs.close()
+if __name__ == "__main__": learn()
 
 
 # /Users/abhinavkumar/Desktop/USC/Courses_Fall2016/CSCI544_HW/Ass1/Spam\ or\ Ham/train
